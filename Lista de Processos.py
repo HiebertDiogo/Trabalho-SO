@@ -1,77 +1,104 @@
-# Programa SO - Lista de Processos
-from queue import Queue
+import copy
 
-"""
-- Leitura dos inputs e ordenação segundo o tempo de chegada
-- Contador responsável pela posição temporal da fila
-- Lista que armazena o Tempo de Retorno, Resposta, Espera de cada processo. Inicio para cada processo: [[0,...],[0,...],[0,...]]
-    - [ [0,0,0], [0,0,0], [0,0,0], [0,0,0] ] 
-"""
+class Processo:
+    def __init__(self, num, tempo_chegada, tempo_exec):
+        self.nome = "P"+ str(num) # aqui seria o campo do nome do processo, ignore por enquanto, mas seria tipo 'P1'
+        self.tempo_chegada = tempo_chegada
+        self.tempo_exec = tempo_exec
+        self.tempo_conclusao = 0
+        self.tempo_retorno = 0 
+        self.tempo_resposta = 0
+        self.tempo_espera = 0
+        self.executado = False
 
+    def show(self):#Função pra debug para ver as infos dos processos
+        print(f"\nProcesso: {self.nome}")
+        print(f"Tempo de Conclusão: {self.tempo_chegada}")
+        print(f"Tempo de Conclusão: {self.tempo_exec}")
+        print(f"Tempo de Conclusão: {self.tempo_conclusao}")
+        print(f"Tempo de Retorno: {self.tempo_retorno}")
+        print(f"Tempo de Resposta: {self.tempo_resposta}")
+        print(f"Tempo de Espera: {self.tempo_espera}")
 
-# def returnTime():
-
-# def answerTime():
-
-# def waitTime():
-
-
-def processoFCFS(input):
-    dados_processos = [list([[0],[0],[0]]) for i in range(len(input))]
-    # dados_processos[][0] = Registro do tempo de Retorno
-    # dados_processos[][1] = Registro do tempo de Resposta
-    # dados_processos[][2] = Registro do tempo de Espera
-
-    apontador = 0
-    final_time = sum(i[1] for i in input) # Corrigir
-
-    while apontador <= final_time:
-        i = 0
-        dados_processos[i][0][0] = input[0][1] - apontador
-        dados_processos[i][1][0] = input[0][0] - apontador
-        dados_processos[i][2][0] = apontador - input[0][0]
-
-        apontador += input[i][1]
-        i += 1
-
-    return dados_processos
+    def teste(self):
+        print(f"\nProcesso: {self.nome}")
 
 
+def processoSJF(processos):
+
+    numeroProcessos = len(processos)
+    timer = 0 #nosso temporizador
+    fila_exec = []
+    a = True
+    b = 0
+
+    while len(fila_exec) < numeroProcessos:
+
+        fila = []
+
+        for i in range(len(processos)):
+            if (processos[i].tempo_chegada <= timer) and (processos[i].executado == False):
+                fila.append(processos[i])
+        
+        print(len(fila))
+
+        fila = sorted(fila, key= lambda process: process.tempo_exec)              
+
+        # CORRIGIR
+        if timer == fila[0].tempo_chegada:#considerando que o primeiro processo inicia em 0
+            timer = fila[0].tempo_exec 
+            fila[0].tempo_conclusao = timer #o tempo de conclusão e retorno são iguais ao timer, ou o tempo de execução do processo
+            fila[0].tempo_retorno = timer
+            fila[0].tempo_resposta = 0 #tempo de resposta e espera é zero para o primeiro processo
+            fila[0].tempo_espera = 0
+        else:#agora essa parte considera que o primeiro processo não começa em 0 mas sim em outro tempo
+            timer = fila[0].tempo_chegada + fila[0].tempo_exec
+            fila[0].tempo_conclusao = timer #tempo que o processo termina
+            fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
+            fila[0].tempo_resposta = 0
+            fila[0].tempo_espera = 0
+
+        print("--", len(fila_exec))
+        fila[0].executado = True
+        fila_exec.append(fila[0])       
+
+    tempRetorno = tempRespost = tempEspera = 0
+
+    for i in range(len(fila_exec)): #Fazemos a soma de todos os tempos
+        tempRetorno += fila_exec[i].tempo_retorno
+        tempRespost += fila_exec[i].tempo_resposta
+        tempEspera += fila_exec[i].tempo_espera
+
+    tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
+    tempRespost = tempRespost/numeroProcessos
+    tempEspera = tempEspera/numeroProcessos
+    
+
+    return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
 
 
-
-# def processoSJF(input):
-
-
-# def processoRR(input):
-#     input = sorted(input)
-#     return input
-
+############################################################################################################################
 
 def readInput():
     processos = []
-    a= 0
 
-    while a < 4: # EOF
-        processo = input().split()
-        processo = [int(i) for i in processo]
-        processos.append(processo)
-        a += 1
-
-    # Ordena o input de acordo com o tempo de chegada
-    processos.sort(key=lambda x: x[0])
-
+    with open('input1.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+        linhas = arquivo.readlines()
+        for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
+            dado = linha.split()
+            processo = Processo(j+1, int(dado[0]), int(dado[1]))
+            processos.append(processo)
+           
     return processos
 
 def main():
     input = readInput()
-    # print(input)
+    # print(processoFCFS(input.copy()))
+    print(processoSJF(copy.deepcopy(input)))
 
-    # print(processoFCFS(input))
 
-    apontador = 0
+    # for i in input: #só pra mostras as infos dos processos!
+    #     i.show()
 
 
 main()
-
-
