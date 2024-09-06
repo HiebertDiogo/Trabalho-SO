@@ -39,28 +39,23 @@ def processoSJF(processos):
         for i in range(len(processos)):
             if (processos[i].tempo_chegada <= timer) and (processos[i].executado == False):
                 fila.append(processos[i])
-        
-        print(len(fila))
 
         fila = sorted(fila, key= lambda process: process.tempo_exec)              
 
-        # CORRIGIR
-        if timer == fila[0].tempo_chegada:#considerando que o primeiro processo inicia em 0
-            timer = fila[0].tempo_exec 
-            fila[0].tempo_conclusao = timer #o tempo de conclusão e retorno são iguais ao timer, ou o tempo de execução do processo
-            fila[0].tempo_retorno = timer
-            fila[0].tempo_resposta = 0 #tempo de resposta e espera é zero para o primeiro processo
-            fila[0].tempo_espera = 0
-        else:#agora essa parte considera que o primeiro processo não começa em 0 mas sim em outro tempo
-            timer = fila[0].tempo_chegada + fila[0].tempo_exec
-            fila[0].tempo_conclusao = timer #tempo que o processo termina
-            fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
-            fila[0].tempo_resposta = 0
-            fila[0].tempo_espera = 0
 
-        print("--", len(fila_exec))
+        if timer < fila[0].tempo_chegada:
+            timer = fila[0].tempo_chegada
+
+        fila[0].tempo_conclusao = timer + fila[0].tempo_exec
+        fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
+        fila[0].tempo_resposta = timer - fila[0].tempo_chegada
+        fila[0].tempo_espera = timer - fila[0].tempo_chegada
+
+        timer += fila[0].tempo_exec
+
+
         fila[0].executado = True
-        fila_exec.append(fila[0])       
+        fila_exec.append(fila[0])
 
     tempRetorno = tempRespost = tempEspera = 0
 
@@ -82,7 +77,7 @@ def processoSJF(processos):
 def readInput():
     processos = []
 
-    with open('input1.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+    with open('input3.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
         linhas = arquivo.readlines()
         for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
             dado = linha.split()

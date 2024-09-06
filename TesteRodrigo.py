@@ -1,3 +1,4 @@
+import copy
 
 class Processo:
     def __init__(self, num, tempo_chegada, tempo_exec):
@@ -74,59 +75,32 @@ def processoSJF(processos):
     numeroProcessos = len(processos)
     timer = 0 #nosso temporizador
     fila_exec = []
-    fila = []
+    a = True
+    b = 0
 
-    while len(fila_exec) != numeroProcessos:
-        for i in range(numeroProcessos):
+    while len(fila_exec) < numeroProcessos:
+
+        fila = []
+
+        for i in range(len(processos)):
             if (processos[i].tempo_chegada <= timer) and (processos[i].executado == False):
                 fila.append(processos[i])
-                processos[i].executado = True
 
-        nao_executados = [process for process in fila_exec if process.executado == False]
+        fila = sorted(fila, key= lambda process: process.tempo_exec)              
 
-        nao_executados.sort(key = lambda process: process.tempo_exec)
 
-        iter_nao_executados = iter(nao_executados)
+        if timer < fila[0].tempo_chegada:
+            timer = fila[0].tempo_chegada
 
-        for p in fila:
-            if p.executado == True:
-                fila_exec.append(p)
-            else:
-                fila_exec.append(next(iter_nao_executados))  
+        fila[0].tempo_conclusao = timer + fila[0].tempo_exec
+        fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
+        fila[0].tempo_resposta = timer - fila[0].tempo_chegada
+        fila[0].tempo_espera = timer - fila[0].tempo_chegada
 
-        # fila_exec = sorted(fila_exec, key= lambda process: process.tempo_exec)
-        print(len(fila_exec))
-        for i in fila_exec:
-            i.teste()
+        timer += fila[0].tempo_exec
 
-        for i in range(len(fila_exec)):
-
-            if fila_exec[i].executado == True:
-                continue
-            
-            if i == 0: #primeiro processo
-                if timer == fila_exec[0].tempo_chegada:#considerando que o primeiro processo inicia em 0
-                    timer = fila_exec[0].tempo_exec 
-                    fila_exec[0].tempo_conclusao = timer #o tempo de conclusão e retorno são iguais ao timer, ou o tempo de execução do processo
-                    fila_exec[0].tempo_retorno = timer
-                    fila_exec[0].tempo_resposta = 0 #tempo de resposta e espera é zero para o primeiro processo
-                    fila_exec[0].tempo_espera = 0
-                else:#agora essa parte considera que o primeiro processo não começa em 0 mas sim em outro tempo
-                    timer = fila_exec[0].tempo_chegada + fila_exec[0].tempo_exec
-                    fila_exec[0].tempo_conclusao = timer #tempo que o processo termina
-                    fila_exec[0].tempo_retorno = fila_exec[0].tempo_conclusao - fila_exec[0].tempo_chegada
-                    fila_exec[0].tempo_resposta = 0
-                    fila_exec[0].tempo_espera = 0
-            else:
-                if timer < fila_exec[i].tempo_chegada: #Se não tivemos nenhum processo para executar o timer é incrementado até o tempo que chegue um processo
-                    timer = fila_exec[i].tempo_chegada
-                fila_exec[i].tempo_resposta = (timer - fila_exec[i].tempo_chegada)
-                timer += fila_exec[i].tempo_exec
-                fila_exec[i].tempo_conclusao = timer
-                fila_exec[i].tempo_retorno = (fila_exec[i].tempo_conclusao - fila_exec[i].tempo_chegada)
-                fila_exec[i].tempo_espera = fila_exec[i].tempo_resposta
-
-            fila_exec[i].executado = True
+        fila[0].executado = True
+        fila_exec.append(fila[0])
 
     tempRetorno = tempRespost = tempEspera = 0
 
@@ -138,6 +112,7 @@ def processoSJF(processos):
     tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
     tempRespost = tempRespost/numeroProcessos
     tempEspera = tempEspera/numeroProcessos
+    
 
     return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
 
@@ -147,7 +122,7 @@ def processoSJF(processos):
 def readInput():
     processos = []
 
-    with open('input1.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+    with open('input4.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
         linhas = arquivo.readlines()
         for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
             dado = linha.split()
@@ -158,8 +133,10 @@ def readInput():
 
 def main():
     input = readInput()
-    # print(processoFCFS(input.copy()))
-    print(processoSJF(input.copy()))
+    print(processoFCFS(input.copy()))
+    print(processoSJF(copy.deepcopy(input)))
+
+    # print(processoSJF(input.copy()))
 
 
     # for i in input: #só pra mostras as infos dos processos!
