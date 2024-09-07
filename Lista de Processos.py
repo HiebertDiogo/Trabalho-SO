@@ -24,38 +24,36 @@ class Processo:
         print(f"\nProcesso: {self.nome}")
 
 
-def processoSJF(processos):
+def processoRR(processos):
 
     numeroProcessos = len(processos)
     timer = 0 #nosso temporizador
     fila_exec = []
-    a = True
-    b = 0
+    fila = []
 
     while len(fila_exec) < numeroProcessos:
 
-        fila = []
+        for p in processos:
+            if (p.executado == False) and (p.tempo_exec != 0) and ():
+                ....
 
-        for i in range(len(processos)):
-            if (processos[i].tempo_chegada <= timer) and (processos[i].executado == False):
-                fila.append(processos[i])
-
-        fila = sorted(fila, key= lambda process: process.tempo_exec)              
-
+        fila_....
 
         if timer < fila[0].tempo_chegada:
             timer = fila[0].tempo_chegada
 
+
         fila[0].tempo_conclusao = timer + fila[0].tempo_exec
         fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
         fila[0].tempo_resposta = timer - fila[0].tempo_chegada
-        fila[0].tempo_espera = timer - fila[0].tempo_chegada
+        fila[0].tempo_espera += timer - fila[0].tempo_chegada
 
         timer += fila[0].tempo_exec
 
 
-        fila[0].executado = True
-        fila_exec.append(fila[0])
+        if fila[0].tempo_exec == 0:
+            fila[0].executado = True
+            fila_exec.append(fila[0])
 
     tempRetorno = tempRespost = tempEspera = 0
 
@@ -69,7 +67,7 @@ def processoSJF(processos):
     tempEspera = tempEspera/numeroProcessos
     
 
-    return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
+    return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
 
 
 ############################################################################################################################
@@ -88,8 +86,11 @@ def readInput():
 
 def main():
     input = readInput()
-    # print(processoFCFS(input.copy()))
-    print(processoSJF(copy.deepcopy(input)))
+    # print(processoFCFS(copy.deepcopy(input)))
+    # print(processoSJF(copy.deepcopy(input)))
+    print(processoRR(copy.deepcopy(input)))
+
+
 
 
     # for i in input: #só pra mostras as infos dos processos!

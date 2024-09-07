@@ -13,15 +13,14 @@ class Processo:
 
     def show(self):#Função pra debug para ver as infos dos processos
         print(f"\nProcesso: {self.nome}")
-        print(f"Tempo de Conclusão: {self.tempo_chegada}")
-        print(f"Tempo de Conclusão: {self.tempo_exec}")
+        print(f"Tempo de Chegada: {self.tempo_chegada}")
+        print(f"Tempo de Execução: {self.tempo_exec}")
         print(f"Tempo de Conclusão: {self.tempo_conclusao}")
         print(f"Tempo de Retorno: {self.tempo_retorno}")
         print(f"Tempo de Resposta: {self.tempo_resposta}")
         print(f"Tempo de Espera: {self.tempo_espera}")
 
-    def teste(self):
-        print(f"\nProcesso: {self.nome}")
+############################################################################################################################
 
 def processoFCFS(processos):
 
@@ -54,7 +53,6 @@ def processoFCFS(processos):
 
         processos[i].executado = True
             
-
     tempRetorno = tempRespost = tempEspera = 0
 
     for i in range(numeroProcessos):#Fazemos a soma de todos os tempos
@@ -75,8 +73,6 @@ def processoSJF(processos):
     numeroProcessos = len(processos)
     timer = 0 #nosso temporizador
     fila_exec = []
-    a = True
-    b = 0
 
     while len(fila_exec) < numeroProcessos:
 
@@ -87,7 +83,6 @@ def processoSJF(processos):
                 fila.append(processos[i])
 
         fila = sorted(fila, key= lambda process: process.tempo_exec)              
-
 
         if timer < fila[0].tempo_chegada:
             timer = fila[0].tempo_chegada
@@ -104,10 +99,10 @@ def processoSJF(processos):
 
     tempRetorno = tempRespost = tempEspera = 0
 
-    for i in range(len(fila_exec)): #Fazemos a soma de todos os tempos
-        tempRetorno += fila_exec[i].tempo_retorno
-        tempRespost += fila_exec[i].tempo_resposta
-        tempEspera += fila_exec[i].tempo_espera
+    for processo in fila_exec: #Fazemos a soma de todos os tempos
+        tempRetorno += processo.tempo_retorno
+        tempRespost += processo.tempo_resposta
+        tempEspera += processo.tempo_espera
 
     tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
     tempRespost = tempRespost/numeroProcessos
@@ -116,6 +111,12 @@ def processoSJF(processos):
 
     return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
 
+############################################################################################################################
+
+def processoRR(processos):
+
+    return
+    # return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
 
 ############################################################################################################################
 
@@ -133,7 +134,7 @@ def readInput():
 
 def main():
     input = readInput()
-    print(processoFCFS(input.copy()))
+    print(processoFCFS(copy.deepcopy(input)))
     print(processoSJF(copy.deepcopy(input)))
 
     # print(processoSJF(input.copy()))
