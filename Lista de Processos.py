@@ -31,42 +31,38 @@ def processoRR(processos):
     fila_exec = []
     fila = []
     quantum = 2
-
-    for p in processos:
-        if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer):
-            fila.append(p)
-
-    aux = fila[0]
+    aux = None  # Inicializando 'aux' como None
 
     while len(fila_exec) < numeroProcessos:
 
         for p in processos:
-            if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer)  :
+            if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer) and (p != aux):
                 fila.append(p)
-        if aux.tempo_exec != 0:
+
+        if aux is not None and aux.tempo_exec != 0:  # Verificar se 'aux' não é None
             fila.append(aux)
+        
+        #if len(fila) == 0:  # Evitar tentar acessar fila[0] quando estiver vazia
+            #timer += 1
+            #continue
 
         if timer < fila[0].tempo_chegada:
             timer = fila[0].tempo_chegada
 
         fila[0].tempo_conclusao = timer + quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
         fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
-        fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if (fila[0].tempo_resposta == None) else fila[0].tempo_resposta
+        fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if (fila[0].tempo_resposta is None) else fila[0].tempo_resposta
         
-        fila[0].tempo_chegada = timer - fila[0].tempo_conclusao
         fila[0].tempo_espera += timer - fila[0].tempo_chegada
 
-
         timer += quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
-
         fila[0].tempo_exec -= quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
 
         if fila[0].tempo_exec == 0:
             fila[0].executado = True
             fila_exec.append(fila[0])
 
-        aux = fila[0]
-        fila = fila.pop(0)
+        aux = fila.pop(0)  # Atualizando 'aux' com o processo atual
 
     tempRetorno = tempRespost = tempEspera = 0
 
@@ -80,7 +76,7 @@ def processoRR(processos):
     tempEspera = tempEspera/numeroProcessos
     
 
-    return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
+    return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do RR
 
 
 ############################################################################################################################
@@ -88,7 +84,7 @@ def processoRR(processos):
 def readInput():
     processos = []
 
-    with open('input3.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+    with open('input5.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
         linhas = arquivo.readlines()
         for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
             dado = linha.split()
