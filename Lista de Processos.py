@@ -7,7 +7,7 @@ class Processo:
         self.tempo_exec = tempo_exec
         self.tempo_conclusao = 0
         self.tempo_retorno = 0 
-        self.tempo_resposta = 0
+        self.tempo_resposta = None
         self.tempo_espera = 0
         self.executado = False
 
@@ -30,12 +30,18 @@ def processoRR(processos):
     timer = 0 #nosso temporizador
     fila_exec = []
     fila = []
-    # aux = Processo(None, None, None)
+    quantum = 2
+
+    for p in processos:
+        if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer):
+            fila.append(p)
+
+    aux = fila[0]
 
     while len(fila_exec) < numeroProcessos:
 
         for p in processos:
-            if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer) and p != aux  :
+            if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer)  :
                 fila.append(p)
         if aux.tempo_exec != 0:
             fila.append(aux)
@@ -43,21 +49,24 @@ def processoRR(processos):
         if timer < fila[0].tempo_chegada:
             timer = fila[0].tempo_chegada
 
-        fila[0].tempo_conclusao = timer + 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
+        fila[0].tempo_conclusao = timer + quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
         fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
-        fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if fila[0].tempo_chegada == None else fila[0].tempo_chegada
+        fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if (fila[0].tempo_resposta == None) else fila[0].tempo_resposta
+        
+        fila[0].tempo_chegada = timer - fila[0].tempo_conclusao
         fila[0].tempo_espera += timer - fila[0].tempo_chegada
 
-        timer += 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
 
-        fila[0].tempo_exec -= 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
+        timer += quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
 
-        aux = fila[0]
-        fila = fila.pop(0)
+        fila[0].tempo_exec -= quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
 
         if fila[0].tempo_exec == 0:
             fila[0].executado = True
             fila_exec.append(fila[0])
+
+        aux = fila[0]
+        fila = fila.pop(0)
 
     tempRetorno = tempRespost = tempEspera = 0
 

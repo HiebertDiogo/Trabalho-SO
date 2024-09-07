@@ -55,10 +55,10 @@ def processoFCFS(processos):
             
     tempRetorno = tempRespost = tempEspera = 0
 
-    for i in range(numeroProcessos):#Fazemos a soma de todos os tempos
-        tempRetorno += processos[i].tempo_retorno
-        tempRespost += processos[i].tempo_resposta
-        tempEspera += processos[i].tempo_espera
+    for processo in processos: #Fazemos a soma de todos os tempos
+        tempRetorno += processo.tempo_retorno
+        tempRespost += processo.tempo_resposta
+        tempEspera += processo.tempo_espera
 
     tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
     tempRespost = tempRespost/numeroProcessos
