@@ -30,26 +30,30 @@ def processoRR(processos):
     timer = 0 #nosso temporizador
     fila_exec = []
     fila = []
+    # aux = Processo(None, None, None)
 
     while len(fila_exec) < numeroProcessos:
 
         for p in processos:
-            if (p.executado == False) and (p.tempo_exec != 0) and ():
-                ....
-
-        fila_....
+            if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer) and p != aux  :
+                fila.append(p)
+        if aux.tempo_exec != 0:
+            fila.append(aux)
 
         if timer < fila[0].tempo_chegada:
             timer = fila[0].tempo_chegada
 
-
-        fila[0].tempo_conclusao = timer + fila[0].tempo_exec
+        fila[0].tempo_conclusao = timer + 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
         fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
-        fila[0].tempo_resposta = timer - fila[0].tempo_chegada
+        fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if fila[0].tempo_chegada == None else fila[0].tempo_chegada
         fila[0].tempo_espera += timer - fila[0].tempo_chegada
 
-        timer += fila[0].tempo_exec
+        timer += 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
 
+        fila[0].tempo_exec -= 2 if (fila[0].tempo_exec > 2) else fila[0].tempo_exec
+
+        aux = fila[0]
+        fila = fila.pop(0)
 
         if fila[0].tempo_exec == 0:
             fila[0].executado = True

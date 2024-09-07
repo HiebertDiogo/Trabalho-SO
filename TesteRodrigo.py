@@ -7,7 +7,7 @@ class Processo:
         self.tempo_exec = tempo_exec
         self.tempo_conclusao = 0
         self.tempo_retorno = 0 
-        self.tempo_resposta = 0
+        self.tempo_resposta = None
         self.tempo_espera = 0
         self.executado = False
 
@@ -123,7 +123,7 @@ def processoRR(processos):
 def readInput():
     processos = []
 
-    with open('input4.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+    with open('input1.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
         linhas = arquivo.readlines()
         for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
             dado = linha.split()
@@ -136,9 +136,7 @@ def main():
     input = readInput()
     print(processoFCFS(copy.deepcopy(input)))
     print(processoSJF(copy.deepcopy(input)))
-
-    # print(processoSJF(input.copy()))
-
+    print(processoRR(copy.deepcopy(input)))
 
     # for i in input: #só pra mostras as infos dos processos!
     #     i.show()
