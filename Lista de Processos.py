@@ -42,23 +42,30 @@ def processoRR(processos):
         if aux is not None and aux.tempo_exec != 0:  # Verificar se 'aux' não é None
             fila.append(aux)
         
-        #if len(fila) == 0:  # Evitar tentar acessar fila[0] quando estiver vazia
-            #timer += 1
-            #continue
+    #     P1, P2, P1, P3, P2, P1, P3, P1, P3
+    #    0  2   4   6   8   10  12  14  16  18
 
-        if timer < fila[0].tempo_chegada:
-            timer = fila[0].tempo_chegada
+        if len(fila) == 0:
+            timer += 1
+            continue
 
-        fila[0].tempo_conclusao = timer + quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
-        fila[0].tempo_retorno = fila[0].tempo_conclusao - fila[0].tempo_chegada
+        # if timer < fila[0].tempo_chegada:
+        #     timer = fila[0].tempo_chegada
+
+        # fila[0].tempo_espera += timer - fila[0].tempo_conclusao
+
+        fila[0].tempo_conclusao = timer + quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec #$
+
+       
         fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if (fila[0].tempo_resposta is None) else fila[0].tempo_resposta
         
-        fila[0].tempo_espera += timer - fila[0].tempo_chegada
+        fila[0].tempo_espera += timer - fila[0].tempo_conclusao
 
         timer += quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
         fila[0].tempo_exec -= quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
 
         if fila[0].tempo_exec == 0:
+            fila[0].tempo_retorno = timer - fila[0].tempo_chegada
             fila[0].executado = True
             fila_exec.append(fila[0])
 
@@ -66,10 +73,10 @@ def processoRR(processos):
 
     tempRetorno = tempRespost = tempEspera = 0
 
-    for i in range(len(fila_exec)): #Fazemos a soma de todos os tempos
-        tempRetorno += fila_exec[i].tempo_retorno
-        tempRespost += fila_exec[i].tempo_resposta
-        tempEspera += fila_exec[i].tempo_espera
+    for processo in fila_exec: #Fazemos a soma de todos os tempos
+        tempRetorno += processo.tempo_retorno
+        tempRespost += processo.tempo_resposta
+        tempEspera += processo.tempo_espera
 
     tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
     tempRespost = tempRespost/numeroProcessos
