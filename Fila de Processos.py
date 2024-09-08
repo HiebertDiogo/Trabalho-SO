@@ -48,7 +48,7 @@ def processoFCFS(processos):
                 processos[0].tempo_espera = 0
 
         else:
-            if timer < processos[i].tempo_chegada: #Se não tivemos nenhum processo para executar o timer é incrementado até o tempo que chegue um processo
+            if timer < processos[i].tempo_chegada: #Se não houver nenhum processo para executar o timer é incrementado até o tempo que chegue um processo
                 timer = processos[i].tempo_chegada
             processos[i].tempo_resposta = (timer - processos[i].tempo_chegada)
             timer += processos[i].tempo_exec
@@ -71,7 +71,7 @@ def processoFCFS(processos):
     tempRespost = tempRespost/numeroProcessos
     tempEspera = tempEspera/numeroProcessos
 
-    return f"FCFS {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
+    return f"FCFS {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" # Retorna uma string com os dados do FCFS
 
 ############################################################################################################################
 
@@ -132,7 +132,7 @@ def processoSJF(processos):
     tempRespost = tempRespost/numeroProcessos
     tempEspera = tempEspera/numeroProcessos
 
-    return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do FCFS
+    return f"SJF {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" # Retorna uma string com os dados do SJF
 
 ############################################################################################################################
 
@@ -191,25 +191,27 @@ def processoRR(processos):
 
     tempRetorno = tempRespost = tempEspera = 0
 
-    for processo in fila_exec: #Fazemos a soma de todos os tempos
+    # Soma de todos os tempos
+    for processo in fila_exec:
         tempRetorno += processo.tempo_retorno
         tempRespost += processo.tempo_resposta
         tempEspera += processo.tempo_espera
 
-    tempRetorno = tempRetorno/numeroProcessos #Fazemos a media aqui
+    # Cálculo das médias dos tempos
+    tempRetorno = tempRetorno/numeroProcessos
     tempRespost = tempRespost/numeroProcessos
     tempEspera = tempEspera/numeroProcessos
     
 
-    return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" #retornamos uma string com os dados do RR
+    return f"RR {tempRetorno:.1f} {tempRespost:.1f} {tempEspera:.1f}" # Retorna uma string com os dados do RR
 
 ############################################################################################################################
 
-def readInput():
+def readInput(nome_arquivo):
     processos = []
 
     # Leitura do arquivo txt
-    with open('input2.txt', 'r') as arquivo:
+    with open(nome_arquivo, 'r') as arquivo:
         linhas = arquivo.readlines()
 
         # Foi utilizado o enumerate para enumerar os processo e assim usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
@@ -222,14 +224,14 @@ def readInput():
     return processos
 
 def main():
-    input = readInput()
+   
+    input = readInput("input1.txt")
 
     # Faz-se uma cópia da lista de processos, para que não haja compartilhamento de endereços com a lista principal
     print(processoFCFS(copy.deepcopy(input)))
     print(processoSJF(copy.deepcopy(input)))
     print(processoRR(copy.deepcopy(input)))
 
-    
 # Executa o programa
 main()
 
