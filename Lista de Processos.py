@@ -6,10 +6,11 @@ class Processo:
         self.tempo_chegada = tempo_chegada
         self.tempo_exec = tempo_exec
         self.tempo_conclusao = 0
-        self.tempo_retorno = 0 
+        self.tempo_retorno = 0
         self.tempo_resposta = None
         self.tempo_espera = 0
         self.executado = False
+        self.tempo_chegada_aux = tempo_chegada
 
     def show(self):#Função pra debug para ver as infos dos processos
         print(f"\nProcesso: {self.nome}")
@@ -27,48 +28,53 @@ class Processo:
 def processoRR(processos):
 
     numeroProcessos = len(processos)
-    timer = 0 #nosso temporizador
-    fila_exec = []
-    fila = []
+    timer = 0 # Temporizador
+    fila_exec = [] # Fila de executados
+    fila = [] # Fila dos processos que irão ser executados
     quantum = 2
-    aux = None  # Inicializando 'aux' como None
+    aux = None
 
     while len(fila_exec) < numeroProcessos:
 
         for p in processos:
+            # Preenche a fila com os inputs, respeitando o tempo, a não duplicidade e flag de executado
             if (p.executado == False) and (p not in fila) and (p.tempo_chegada <= timer) and (p != aux):
                 fila.append(p)
-
-        if aux is not None and aux.tempo_exec != 0:  # Verificar se 'aux' não é None
+        # Adiciona o último processo que foi executado ao final da fila
+        if aux is not None and aux.tempo_exec != 0:
             fila.append(aux)
         
-    #     P1, P2, P1, P3, P2, P1, P3, P1, P3
-    #    0  2   4   6   8   10  12  14  16  18
-
+        # Reconhece a ociosidade da fila, enquanto não chegam novos processos
         if len(fila) == 0:
             timer += 1
             continue
 
-        # if timer < fila[0].tempo_chegada:
-        #     timer = fila[0].tempo_chegada
+        # Diminui o tempo de chegada do processo atual, com seu antigo tempo de conclusão.
+        # Quando o tempo de conclusão é igual a 0, significa que é a primeira vez do processo na fila, por isso diminui-se pelo tempo de chegada
+        fila[0].tempo_espera += (timer - fila[0].tempo_conclusao) if (fila[0].tempo_conclusao > 0) else (timer - fila[0].tempo_chegada)
 
-        # fila[0].tempo_espera += timer - fila[0].tempo_conclusao
+        # Calcula o tempo de conclusão da etapa atual de acordo com o tamanho do quantum
+        fila[0].tempo_conclusao = (timer + quantum) if (fila[0].tempo_exec > quantum) else (timer + fila[0].tempo_exec)
 
-        fila[0].tempo_conclusao = timer + quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec #$
-
-       
+        # Calcula apenas uma vez e repete o valor, diminui o timer atual pelo tempo de chegada do processo
         fila[0].tempo_resposta = (timer - fila[0].tempo_chegada) if (fila[0].tempo_resposta is None) else fila[0].tempo_resposta
         
-        fila[0].tempo_espera += timer - fila[0].tempo_conclusao
-
+        # Atualiza o timer de acordo com o quantum, ou com o que restou do tempo de execução do processo
         timer += quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
-        fila[0].tempo_exec -= quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
 
+        # Decrementa o tempo restante para a execução do processo
+        fila[0].tempo_exec -= quantum if (fila[0].tempo_exec > quantum) else fila[0].tempo_exec
+        
+        # Verifica se o processo chegou a um fim de execução
         if fila[0].tempo_exec == 0:
+            # Diminui o tempo atual de finalização do processo com o tempo de chegada
             fila[0].tempo_retorno = timer - fila[0].tempo_chegada
+            # Faz o set da flag, indicando que o processo foi completamente executado
             fila[0].executado = True
+            # Adiciona a fila dos processos executados
             fila_exec.append(fila[0])
 
+        # Remove o processo que acabou de ser executado, para assim coloca-lo no final da fila
         aux = fila.pop(0)  # Atualizando 'aux' com o processo atual
 
     tempRetorno = tempRespost = tempEspera = 0
@@ -91,7 +97,7 @@ def processoRR(processos):
 def readInput():
     processos = []
 
-    with open('input5.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
+    with open('input2.txt', 'r') as arquivo: #lemos os dados do arquivo .txt
         linhas = arquivo.readlines()
         for j, linha in enumerate(linhas): #usamos o enumerate para enumerar os processo e podermos usar o 'j' para formar o nome do processo: P+j, P1- P2 - P3 etc
             dado = linha.split()
