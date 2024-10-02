@@ -225,7 +225,7 @@ def readInput(nome_arquivo):
 
 def main():
    
-    input = readInput("input1.txt")
+    input = readInput("Projeto 1/input1.txt")
 
     # Faz-se uma cópia da lista de processos, para que não haja compartilhamento de endereços com a lista principal
     print(processoFCFS(copy.deepcopy(input)))
