@@ -110,14 +110,18 @@ def readInput(file_name):
     return num_quadros, referencias
 
 def main():
-    for i in range(1,8):
-        input_numQuadros, input_seq = readInput(f"Projeto 2/input{i}.txt")
+    # for i in range(1,8):
+    #     input_numQuadros, input_seq = readInput(f"Projeto 2/input{i}.txt")
         
-        print(FIFO(input_numQuadros, copy.deepcopy(input_seq)))
-        print(OTM(input_numQuadros, copy.deepcopy(input_seq)))
-        print(LRU(input_numQuadros, copy.deepcopy(input_seq)))
-        print()
-    # input_numQuadros, input_seq = readInput(f"Projeto 2/input7.txt")
-    # print(OTM(input_numQuadros, copy.deepcopy(input_seq)))
+    #     print(FIFO(input_numQuadros, copy.deepcopy(input_seq)))
+    #     print(OTM(input_numQuadros, copy.deepcopy(input_seq)))
+    #     print(LRU(input_numQuadros, copy.deepcopy(input_seq)))
+    #     print()
 
+    input_numQuadros, input_seq = readInput(f"Projeto 2/input7.txt")
+        
+    print(FIFO(input_numQuadros, copy.deepcopy(input_seq)))
+    print(OTM(input_numQuadros, copy.deepcopy(input_seq)))
+    print(LRU(input_numQuadros, copy.deepcopy(input_seq)))
+    
 main()
