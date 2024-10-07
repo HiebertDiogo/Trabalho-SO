@@ -70,7 +70,7 @@ def LRU(num_quadros, ref):
 
     # Enquanto houver páginas na sequência de referências
     while len(ref) != 0:
-        pag = ref[0]
+        pag = ref[0] # Página da vez
 
         # Se a página não estiver nos quadros
         if pag not in quadros:
